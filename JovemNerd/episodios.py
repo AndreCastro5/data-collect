@@ -17,11 +17,11 @@ class Collector:
     def save_parquet(self, data):
         now = datetime.datetime.now().strftime("%Y%m%d_%H%M%S.%f")
         df = pd.DataFrame(data)
-        df.to_parquet(f"/dbfs/mnt/datalake/JovemNerd/{self.instance_name}/parquet/{now}.parquet", index=False)
+        df.to_parquet(f"data/{self.instance_name}/parquet/{now}.parquet", index=False)
     
     def save_json(self,data):
         now = datetime.datetime.now().strftime("%Y%m%d_%H%M%S.%f")
-        with open(f"/dbfs/mnt/datalake/JovemNerd/{self.instance_name}/json/{now}.json",'w') as open_file:
+        with open(f"data/{self.instance_name}/json/{now}.json",'w') as open_file:
             json.dump(data,open_file)
 
     def save_data(self, data, format ='json'):
@@ -53,7 +53,7 @@ class Collector:
             print(page)
             data = self.get_and_save(save_format=save_format,
                                      page = page,
-                                     per_page = 1000)
+                                     per_page = 100)
             if data == None:
                 print('Erro ao coletar dados ... aguardando.')
                 time.sleep(60*5)
@@ -62,7 +62,7 @@ class Collector:
                 data_last = pd.to_datetime(data[-1]['published_at']).date()
                 if data_last<pd.to_datetime(date_stop).date():
                     break
-                elif len(data)<1000:
+                elif len(data)<100:
                     break
                 page += 1
                 time.sleep(5)
